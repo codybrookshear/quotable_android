@@ -1,5 +1,6 @@
 package com.example.kotlinbasic.fragments
 
+import CustomAdapter
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlinbasic.ItemsViewModel
 import com.example.kotlinbasic.R
 import com.example.kotlinbasic.databinding.FragmentFirstBinding
 import com.example.kotlinbasic.retrofit.QuotesApi
@@ -46,42 +49,41 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
-
+        val recyclerview = view.findViewById<RecyclerView>(R.id.recyclerview)
         val quotesApi = RetrofitHelper.getInstance().create(QuotesApi::class.java)
-
+        val data = ArrayList<ItemsViewModel>()
         GlobalScope.launch(Dispatchers.Main) {
-            // todo add results to a table on fragment
-            // and clicking on it brings the fragment full screen
-
             val result = quotesApi.getQuotes()
-            //if (result != null)
-            //Log.d("CODY", result.body().toString())
-            val quotesTable = _binding!!.quotesTable
+
             val resultList = result.body()!!.results
 
-            for (i in 0..resultList.size-1) {
-
-                val row = TableRow(activity)
-                val lp = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT)
-                row.layoutParams = lp
-
-                val author = TextView(activity)
-                author.text = resultList[i].author
-                row.addView(author)
-
-                val quote = TextView(activity)
-                quote.text = resultList[i].content
-                row.addView(quote)
-
-                quotesTable.addView(row);
+            for (i in resultList.indices) {
+                data.add(
+                    ItemsViewModel(resultList[i].author, resultList[i].content)
+                )
             }
         }
-    }
 
-override fun onDestroyView() {
+        val adapter = CustomAdapter(data)
+        recyclerview.adapter = adapter
+    }
+//
+//                val row = TableRow(activity)
+//                val lp = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT)
+//                row.layoutParams = lp
+//
+//                val author = TextView(activity)
+//                author.text = resultList[i].author
+//                row.addView(author)
+//
+//                val quote = TextView(activity)
+//                quote.text = resultList[i].content
+//                row.addView(quote)
+//
+//                quotesTable.addView(row);
+
+
+    override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }

@@ -49,5 +49,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // com.example.kotlinbasic.retrofit GSON converter
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2' // coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2' // coroutines
-
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.cardview:cardview:1.0.0'
 }
